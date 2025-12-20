@@ -68,7 +68,6 @@ title('Numerical Propagation of a LEO Satellite Trajectory in 3D Space');
 axis equal
 grid on
 hold off
-
 %% 
 % Computing Total Specific Energy & Angular Momentum at each time step
 Energy = zeros(length(t), 1);
@@ -130,3 +129,4 @@ grid on;
 xlabel('Time (s)');
 ylabel('Relative Momentum Error');
 title('Relative Error in Orbital Angular Energy');
+
