@@ -1,4 +1,4 @@
-%% Trajectory Modeling & Analysis of LEO Satellite
+%% -----Trajectory Modeling & Analysis of LEO Satellite----- %%
 
 % Earth Parameters
 R_E = 6378;                       % in km
@@ -14,7 +14,8 @@ s05 = -0.542;                                    % in km/s
 s06 = 7.497;                                     % in km/s
 initial_states = [s01;s02;s03;s04;s05;s06];
 
-%% 
+%% Implementation of ODE45 Numerical Solver 
+
 % Time Interval
 tspan = 0:0.01:30000;                             % in secs
 
@@ -22,10 +23,10 @@ tspan = 0:0.01:30000;                             % in secs
 tolerance = 1e-9;
 options = odeset("RelTol",tolerance, "AbsTol", tolerance);
 
-% Implementation of ODE45 Numerical Solver
 [t, S] = ode45(@LEOSat, tspan, initial_states, options, go, R_E);
 
-%% 
+%% Graphical Visualizations
+
 % Extracting the Position and Velocity Data from the State Vector
 X_Positions = S(:, 1);
 Y_Positions = S(:, 2);
@@ -33,7 +34,6 @@ Z_Positions = S(:, 3);
 V_Xcomp = S(:, 4);
 V_Ycomp = S(:,5);
 V_Zcomp = S(:,6);
-
 
 % Computation of the Final Position and Velocity of the Satellite
 Sat_Positions  = sqrt(X_Positions.^2 + Y_Positions.^2 + Z_Positions.^2);
@@ -46,10 +46,10 @@ Sat_Final_Velocity = Sat_Velocities(length(t));
 disp('Velocity (km/s) at t = 30,000 seconds:');
 disp(Sat_Final_Velocity);
 
-%% 
+
 % Plotting the Earth as a Perfect Sphere
 fig1 = figure();
-set(fig1,'color','white')
+
 [X,Y,Z] = sphere(100);
 X = X*R_E;
 Y = Y*R_E;
@@ -59,7 +59,8 @@ colormap();
 hold on
 
 % Plotting the Orbital Plane in a 3D Space
-plot3(X_Positions,Y_Positions, Z_Positions,'y-o','LineWidth',3,'MarkerSize',2)
+plot3(X_Positions,Y_Positions, Z_Positions,'y-o',...
+      'LineWidth',3,'MarkerSize',2);
 xlabel('x (km)','FontSize', 12,'FontWeight','bold');
 ylabel('y (km)','FontSize', 12,'FontWeight','bold');
 zlabel('z (km)','FontSize', 12,'FontWeight','bold');
@@ -68,8 +69,9 @@ title('Numerical Propagation of a LEO Satellite Trajectory in 3D Space');
 axis equal
 grid on
 hold off
-%% 
-% Computing Total Specific Energy & Angular Momentum at each time step
+
+%% Computing Total Specific Energy & Angular Momentum at each time step
+
 Energy = zeros(length(t), 1);
 AngularMomentum = zeros(length(t), 1);
 for i = 1:length(t)
@@ -78,16 +80,14 @@ for i = 1:length(t)
     Energy(i) = 0.5 * v^2 - go*R_E^2 / r; % Specific orbital energy (km^2/s^2)
     AngularMomentum(i) = norm(cross(S(i, 1:3), S(i, 4:6)));
 end
-
-%% 
+ 
 % Calculate the initial specific energy
 Energy_initial = Energy(1);
 
 % Calculate the relative error in specific energy
 Energy_error = abs((Energy - Energy_initial) / Energy_initial);
 
-
-% Plot energy over time
+% Plot Energy over Time
 fig2 = figure();
 subplot(2,1,1);
 plot(t, Energy, 'b', 'LineWidth', 0.75);
@@ -106,7 +106,8 @@ xlabel('Time (s)');
 ylabel('Relative Energy Error');
 title('Relative Error in Specific Orbital Energy');
 
-%%
+%% Validation of Conservation of Angular Momentum
+
 % Calculate the initial angular momentum
 Momentum_initial = AngularMomentum(1);
 
